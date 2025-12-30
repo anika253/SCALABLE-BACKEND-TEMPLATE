@@ -1,8 +1,8 @@
 import React from "react";
 import { Routes } from "react-router-dom";
 import { Route } from "react-router-dom";
-import SignUp from "./components/SignUp.jsx";
-import Login from "./components/Login.jsx";
+import SignUp from "./pages/SignUp.jsx";
+import Login from "./pages/Login.jsx";
 
 // Sample App component to demonstrate Tailwind CSS usage and React Router d
 function App() {
