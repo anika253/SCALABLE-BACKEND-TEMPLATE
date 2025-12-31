@@ -1,61 +1,123 @@
-import React from "react";
+import React, { useState, useRef, useContext } from "react";
+import axios from "axios";
 import dp from "../assets/dp.jpg";
+import { dataContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 function SignUp() {
-  return (
-    <div>
-      <div className="w-full h-[100vh] bg-black flex justify-center items-center">
-        <div className="w-[90%] max-w-[600px] h-[500px] bg-[#141f1f] rounded flex flex-col justify-center items-center gap-[20px]">
-          <h1 className="text-white text-2xl font-bold"> SIGN UP </h1>
-          <div className=" w-[100px] h-[100px] rounded-full bg-white  ">
-            <img
-              src={dp}
-              alt=""
-              className="w-[100%] h-[100%] overflow -hidden relative border-2 border-white "
-            />
-            <div
-              className="absolute w-[100%] h-[100%] bg-black top-0  opacity : 0 hover : opacity-50 cursor-pointer flex justify-center items-center
-          text-white text-[20 px] font-semibold cursor-pointer "
-            >
-              +
-            </div>
-            <div> + </div>
-            <div> UPLOAD IMAGE </div>
-          </div>
-          <form className="w-[100%] flex flex-col gap-[20px]">
-            <div className="w-[80%]  h-[50px] flex justify-center items-center flex-col gap-[10px]">
-              <input
-                type="text"
-                placeholder="first name "
-                className="w-[50%] h-[100%] bg-white rounded px-2 mb-4"
-              />
-              <input
-                type="text"
-                placeholder="last name "
-                className="w-[50%] h-[100%] bg-white rounded px-2 mb-4"
-              />
-              <input
-                type="text"
-                placeholder="username "
-                className="w-[80%] h-[50px] bg-white rounded px-2 mb-4"
-              />
-              <input
-                type="email"
-                placeholder="email "
-                className="w-[80%] h-[50px] bg-white rounded px-2 mb-4"
-              />
-              <input
-                type="password"
-                placeholder="password"
-                className="w-[80%] h-[50px] bg-white rounded px-2 mb-4"
-              />
-              <button className = 'bg-[#07c7e4] text-black px-[10px] py-[5px] rounded-lg'>
-SIGN-UP 
-</button>
+  const navigate = useNavigate();
+  const fileRef = useRef(null);
+  const { serverUrl } = useContext(dataContext);
 
-            </div>
-          </form>
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [frontendImage, setFrontendImage] = useState(dp);
+  const [backendImage, setBackendImage] = useState(null);
+
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBackendImage(file);
+    setFrontendImage(URL.createObjectURL(file));
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        `${serverUrl}/api/signup`,
+        { firstName, lastName, userName, email, password },
+        { withCredentials: true }
+      );
+      console.log(data);
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      alert("Signup failed");
+    }
+  };
+
+  return (
+    <div className="w-full h-screen bg-black flex justify-center items-center">
+      <div className="w-[90%] max-w-[600px] bg-[#141f1f] rounded p-6 flex flex-col items-center gap-6">
+        <h1 className="text-white text-2xl font-bold">SIGN UP</h1>
+
+        <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden">
+          <img
+            src={frontendImage}
+            alt="profile"
+            className="w-full h-full object-cover"
+          />
+          <div
+            onClick={() => fileRef.current.click()}
+            className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 flex justify-center items-center text-white text-2xl cursor-pointer"
+          >
+            +
+          </div>
         </div>
+
+        <form
+          onSubmit={handleSignUp}
+          className="w-full flex flex-col items-center gap-4"
+        >
+          <input type="file" hidden ref={fileRef} onChange={handleImage} />
+
+          <input
+            type="text"
+            placeholder="First Name"
+            className="w-[80%] h-[45px] rounded px-2"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+
+          <input
+            type="text"
+            placeholder="Last Name"
+            className="w-[80%] h-[45px] rounded px-2"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+
+          <input
+            type="text"
+            placeholder="Username"
+            className="w-[80%] h-[45px] rounded px-2"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+          />
+
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-[80%] h-[45px] rounded px-2"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-[80%] h-[45px] rounded px-2"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <button className="bg-[#07c7e4] px-6 py-2 rounded font-semibold">
+            SIGN UP
+          </button>
+
+          <p
+            className="text-white cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
+            Already have an account?{" "}
+            <span className="text-blue-400">LOGIN</span>
+          </p>
+        </form>
       </div>
     </div>
   );
