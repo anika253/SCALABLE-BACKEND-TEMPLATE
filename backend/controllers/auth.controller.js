@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../config/token.js";
+import uploadOnCloudiary from "../config/cloudinary.js";
 
 export const SignUp = async (req, res) => {
   try {
@@ -8,6 +9,11 @@ export const SignUp = async (req, res) => {
     if (!firstName || !lastName || !email || !password || !userName) {
       return res.status(400).json({ message: "All fields are required" });
     }
+    let profileImage;
+    if (req.file) {
+      uploadOnCloudiary(req.file.path);
+    }
+    console.log(req.file);
 
     let existUser = await User.findOne({
       email: email,

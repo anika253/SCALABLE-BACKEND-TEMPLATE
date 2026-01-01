@@ -7,13 +7,18 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadImage = async (filePath) => {
+const uploadOnCloudiary = async (filePath) => {
   try {
+    if (!filePath) {
+      return null;
+    }
     let result = cloudinary.uploader.upload(filePath);
     console.log(result);
+    fs.unlinkSync(filePath); // deletes file path
 
     return (await result).secure_url;
   } catch (e) {
     console.log(e);
   }
 };
+export default uploadOnCloudiary;
