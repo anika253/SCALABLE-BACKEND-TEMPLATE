@@ -28,10 +28,24 @@ function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
+    
+        let formData = new FormData()
+        formData.append("firstName", firstName)
+        formData.append("lastName", lastName)
+        formData.append("userName", userName)
+        formData.append("email", email)
+        formData.append("password", password)
+        if(backendImage)
+        {
+            formData.append("profileImage",backendImage)
+        }
+
       const { data } = await axios.post(
-        `${serverUrl}/api/signup`,
+        `${serverUrl}/api/signup,formData`,
         { firstName, lastName, userName, email, password },
-        { withCredentials: true }
+        { withCredentials: true ,
+        headers: {"Content-Type" :"multipart/form-data"}}
+
       );
       console.log(data);
       navigate("/login");
